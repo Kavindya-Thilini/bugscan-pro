@@ -21,13 +21,14 @@ A full-stack QA tool that scans any website for bugs including broken links, mis
 ```bash
 npm install
 node backend/server.js
+```
 Open  http://localhost:3000
 
- 
-Screenshots
+
+## Screenshot
 
 ![alt text](<Screenshot 2026-05-28 225942.png>)
 
 
-Mission
+## Mission
 I wanted to understand how automated QA tools work and demonstrate both automated and manual testing skills.
