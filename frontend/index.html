@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BugScan Pro — QA Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="container">
+    
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">🐞</div>
+        <h1>Bug<span>Scan</span> Pro</h1>
+        <span class="version">v1.0</span>
+    </div>
+
+    <!-- Loading Bar -->
+    <div class="loading-bar" id="loadingBar">
+        <div class="fill"></div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row" id="statsRow" style="display: none;">
+        <div class="stat-card stat-total">
+            <div class="stat-number" id="statTotal">0</div>
+            <div class="stat-label">Total Bugs</div>
+        </div>
+        <div class="stat-card stat-critical">
+            <div class="stat-number" id="statCritical">0</div>
+            <div class="stat-label">Critical</div>
+        </div>
+        <div class="stat-card stat-high">
+            <div class="stat-number" id="statHigh">0</div>
+            <div class="stat-label">High</div>
+        </div>
+        <div class="stat-card stat-medium">
+            <div class="stat-number" id="statMedium">0</div>
+            <div class="stat-label">Medium</div>
+        </div>
+    </div>
+
+    <!-- Main Grid: Scan + Manual -->
+    <div class="main-grid">
+        
+        <!-- Scan Panel -->
+        <div class="panel">
+            <div class="panel-title"><span class="icon">🔍</span> Run Automated Scan</div>
+            <div class="input-group">
+                <label>Target URL</label>
+                <input type="text" id="urlInput" placeholder="https://example.com" value="https://the-internet.herokuapp.com">
+            </div>
+            <button class="btn btn-primary" id="scanBtn" onclick="startScan()">▶ Start Scan</button>
+            <div class="btn-group">
+                <button class="btn btn-sm btn-save" onclick="saveScan()">💾 Save</button>
+                <button class="btn btn-sm btn-history" onclick="loadHistory()">📋 History</button>
+                <button class="btn btn-sm btn-clear" onclick="clearResults()">✕ Clear</button>
+            </div>
+        </div>
+
+        <!-- Manual Panel -->
+        <div class="panel">
+            <div class="panel-title"><span class="icon">📝</span> Manual Report</div>
+            <div class="input-group">
+                <label>Bug Title</label>
+                <input type="text" id="manualTitle" placeholder="e.g., Login button unresponsive">
+            </div>
+            <div class="input-group">
+                <label>Description</label>
+                <textarea id="manualDescription" placeholder="Steps to reproduce, expected vs actual result..."></textarea>
+            </div>
+            <div class="input-group">
+                <label>Severity</label>
+                <select id="manualSeverity">
+                    <option value="Critical">🔴 Critical</option>
+                    <option value="High">🟠 High</option>
+                    <option value="Medium" selected>🟡 Medium</option>
+                    <option value="Low">🟢 Low</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="addManualBug()">＋ Add Bug</button>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div class="results-panel" id="resultsPanel">
+        <div class="results-header">
+            <h3>📋 Bug Reports</h3>
+            <span class="bug-count" id="bugCountLabel"></span>
+        </div>
+        <div id="resultsArea">
+            <div class="empty-state">
+                <div class="empty-icon">🔎</div>
+                <p>Enter a URL and scan, or add a manual bug report</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
