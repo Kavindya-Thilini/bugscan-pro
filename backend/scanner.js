@@ -1,17 +1,12 @@
-// Import Puppeteer - our robot browser
 const puppeteer = require('puppeteer');
 
-// This is the main function - give it a URL, it finds bugs
 async function scanWebsite(url) {
     
-    // Array to store all bugs we find
-    let bugsFound = [];
-
-    // Launch a browser (invisible - no window pops up)
+     let bugsFound = [];
+ 
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
 
-    // Listen for console errors (JavaScript crashes)
     page.on('console', message => {
         if (message.type() === 'error') {
             bugsFound.push({
@@ -23,11 +18,9 @@ async function scanWebsite(url) {
         }
     });
 
-    // Visit the website
     console.log(`Scanning: ${url}`);
     await page.goto(url, { waitUntil: 'load' });
 
-    // ----- CHECK 1: Broken Images -----
     const brokenImages = await page.evaluate(() => {
         const images = Array.from(document.querySelectorAll('img'));
         return images
@@ -44,7 +37,6 @@ async function scanWebsite(url) {
         });
     });
 
-    // ----- CHECK 2: Missing Alt Text on Images -----
     const missingAlt = await page.evaluate(() => {
         const images = Array.from(document.querySelectorAll('img'));
         return images
@@ -61,7 +53,6 @@ async function scanWebsite(url) {
         });
     });
 
-    // ----- CHECK 3: Broken Links -----
     console.log('Checking for broken links...');
     
     const links = await page.evaluate(() => {
@@ -99,12 +90,10 @@ async function scanWebsite(url) {
         }
     }
 
-    // Close the browser
     await browser.close();
 
     console.log(`Scan complete. Found ${bugsFound.length} bugs.`);
     return bugsFound;
 }
 
-// Export the function so server.js can use it
 module.exports = { scanWebsite };
