@@ -19,7 +19,6 @@ function showToast(message, type = 'info') {
     
     container.appendChild(toast);
     
-    // Auto-remove after 3 seconds
     setTimeout(() => {
         if (toast.parentElement) {
             toast.remove();
@@ -27,7 +26,6 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
-// Confirmation Dialog
 function showConfirm(message, onConfirm) {
     const container = document.getElementById('toastContainer');
     
@@ -46,18 +44,15 @@ function showConfirm(message, onConfirm) {
     
     container.appendChild(toast);
     
-    // Yes button
     toast.querySelector('#confirmYes').addEventListener('click', () => {
         toast.remove();
         onConfirm();
     });
     
-    // No button
     toast.querySelector('#confirmNo').addEventListener('click', () => {
         toast.remove();
     });
     
-    // Auto-remove after 8 seconds if no response
     setTimeout(() => {
         if (toast.parentElement) {
             toast.remove();
@@ -65,14 +60,12 @@ function showConfirm(message, onConfirm) {
     }, 8000);
 }
 
-// Store bugs per URL — manual bugs are tied to the scanned URL
 let currentUrl = '';
 let scannedBugs = [];
 let manualBugs = [];
 let allSavedScans = [];
-let currentScanIndex = -1; // Tracks which saved scan is currently loaded
+let currentScanIndex = -1; 
 
-// Run scan
 async function startScan() {
     const url = document.getElementById('urlInput').value.trim();
     
@@ -81,14 +74,11 @@ async function startScan() {
         return;
     }
 
-    // Reset for new URL
-        // Reset for new URL
     currentUrl = url;
     currentScanIndex = -1;
     scannedBugs = [];
     manualBugs = [];
     
-    // Show loading
     document.getElementById('loadingBar').classList.add('active');
     document.getElementById('scanBtn').disabled = true;
     document.getElementById('scanBtn').textContent = '⏳ Scanning...';
@@ -118,7 +108,6 @@ async function startScan() {
     }
 }
 
-// Add manual bug — tied to current URL
 function addManualBug() {
     const title = document.getElementById('manualTitle').value.trim();
     const description = document.getElementById('manualDescription').value.trim();
@@ -141,27 +130,22 @@ function addManualBug() {
         location: 'Manual Report — ' + currentUrl
     });
     
-    // Clear form
     document.getElementById('manualTitle').value = '';
     document.getElementById('manualDescription').value = '';
     
-    // Refresh display
     displayAllBugs();
 
-    // If editing a saved scan, auto-update it
     if (currentScanIndex >= 0) {
         updateScan(currentScanIndex);
     }
 }
 
-// Delete a manual bug from current session
 function deleteManualBug(index) {
     if (index < 0 || index >= manualBugs.length) return;
     
     manualBugs.splice(index, 1);
     displayAllBugs();
     
-    // If editing a saved scan, auto-update it
     if (currentScanIndex >= 0) {
         updateScan(currentScanIndex);
         showToast('Manual bug deleted and scan updated.', 'success');
@@ -170,7 +154,6 @@ function deleteManualBug(index) {
     }
 }
 
-// Display all bugs (scanned + manual for current URL)
 function displayAllBugs() {
     const allBugs = [...scannedBugs, ...manualBugs];
     const resultsArea = document.getElementById('resultsArea');
@@ -184,7 +167,6 @@ function displayAllBugs() {
         return;
     }
 
-    // Update stats
     let critical = 0, high = 0, medium = 0, low = 0;
     
     allBugs.forEach(bug => {
@@ -201,8 +183,6 @@ function displayAllBugs() {
     document.getElementById('statMedium').textContent = medium;
     bugCountLabel.textContent = allBugs.length + ' bug(s) found';
 
-    // Build bug cards
-            // Build bug cards
     let html = '<div class="bug-list">';
     let manualIndex = 0;
     
@@ -213,8 +193,6 @@ function displayAllBugs() {
         const badgeClass = 'badge-' + severityLower;
         const cardClass = 'bug-' + severityLower;
         const isManual = bug.location && bug.location.startsWith('Manual Report');
-        
-        // Track manual bug index for delete
         const currentManualIndex = isManual ? manualIndex++ : -1;
         
         html += `
@@ -238,7 +216,6 @@ function displayAllBugs() {
     resultsArea.innerHTML = html;
 }
 
-// Save scan
 async function saveScan() {
     if (!currentUrl || (scannedBugs.length === 0 && manualBugs.length === 0)) {
         showToast('No bugs to save. Run a scan first.', 'warning');
@@ -261,7 +238,6 @@ async function saveScan() {
     }
 }
 
-// Load history
 async function loadHistory() {
     try {
         const response = await fetch('http://localhost:3000/history');
@@ -301,11 +277,10 @@ async function loadHistory() {
     }
 }
 
-// Restore a saved scan
 function restoreScan(index) {
     const scan = allSavedScans[index];
     currentUrl = scan.url;
-    currentScanIndex = index; // Remember which scan we're editing
+    currentScanIndex = index; 
     document.getElementById('urlInput').value = scan.url;
     
     scannedBugs = scan.bugs.filter(b => !b.location || !b.location.startsWith('Manual Report'));
@@ -315,11 +290,9 @@ function restoreScan(index) {
 }
 
 
-// Delete a saved scan
 function deleteScan(index) {
     showConfirm('Are you sure you want to delete this scan?', async () => {
         try {
-            // Check if we're deleting the currently loaded scan
             if (index === currentScanIndex) {
                 clearResults();
             }
@@ -331,7 +304,6 @@ function deleteScan(index) {
             const data = await response.json();
             showToast('Scan deleted! Remaining scans: ' + data.totalScans, 'success');
             
-            // Reload history
             loadHistory();
         } catch (error) {
             showToast('Failed to delete: ' + error.message, 'error');
@@ -339,7 +311,6 @@ function deleteScan(index) {
     });
 }
 
-// Update a saved scan with new manual bugs
 async function updateScan(index) {
     const allBugs = [...scannedBugs, ...manualBugs];
     
@@ -357,7 +328,6 @@ async function updateScan(index) {
 }
 
 
-// Clear everything
 function clearResults() {
     currentUrl = '';
     scannedBugs = [];
@@ -367,7 +337,6 @@ function clearResults() {
     document.getElementById('bugCountLabel').textContent = '';
 }
 
-// Escape HTML to prevent XSS
 function escapeHtml(text) {
     if (!text) return '';
     const div = document.createElement('div');
