@@ -83,7 +83,7 @@ body {
     margin-left: auto;
 }
 
-/* Panel Layout */
+/* Layout */
 .main-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -114,7 +114,7 @@ body {
     font-size: 16px;
 }
 
-/* Input Fields */
+/* Input */
 .input-group {
     margin-bottom: 14px;
 }
@@ -260,7 +260,7 @@ select option {
 }
 
 
-/* History Card Actions */
+/* History Card */
 .history-actions {
     display: flex;
     flex-direction: column;
